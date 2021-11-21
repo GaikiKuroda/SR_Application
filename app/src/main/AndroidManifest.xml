@@ -4,6 +4,8 @@
     package="app.gkuroda.srapplication"
     >
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:name=".SRApplication"
         android:allowBackup="true"
