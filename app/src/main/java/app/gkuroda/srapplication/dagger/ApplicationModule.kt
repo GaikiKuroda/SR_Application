@@ -1,6 +1,7 @@
 package app.gkuroda.srapplication.dagger
 
 import android.content.Context
+import app.gkuroda.srapplication.R
 import app.gkuroda.srapplication.SRApplication
 import app.gkuroda.srapplication.flux.Dispatcher
 import app.gkuroda.srapplication.flux.action.search.SearchActionCreatable
@@ -9,10 +10,14 @@ import app.gkuroda.srapplication.flux.repository.search.ApiSearchRepository
 import app.gkuroda.srapplication.flux.repository.search.SearchRepository
 import app.gkuroda.srapplication.flux.store.Store
 import app.gkuroda.srapplication.flux.store.StoreInterface
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
 import dagger.Provides
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
+import retrofit2.converter.moshi.MoshiConverterFactory
 import javax.inject.Singleton
 
 @Module
@@ -23,8 +28,22 @@ class ApplicationModule {
     @Provides
     fun okHttpClient(): OkHttpClient = OkHttpClient.Builder().build()
 
- //   @Provides
- //   fun retrofitCliant(okHttpClient: OkHttpClient): Retrofit = createRetrofitCliant(okHttpClient)
+    @Singleton
+    @Provides
+    fun baseApiPath(context: Context): String = context.getString(R.string.github_api_base_url)
+
+    @Singleton
+    @Provides
+    fun moshi(): Moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
+
+    @Singleton
+    @Provides
+    fun retrofit(okHttpClient: OkHttpClient, moshi: Moshi, baseApiPath: String): Retrofit = Retrofit.Builder()
+        .baseUrl(baseApiPath)
+        .addConverterFactory(MoshiConverterFactory.create(moshi))
+        .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+        .client(okHttpClient)
+        .build()
 
     @Singleton
     @Provides
@@ -38,5 +57,5 @@ class ApplicationModule {
 
     @Singleton
     @Provides
-    fun searchRepository(): SearchRepository = ApiSearchRepository()
+    fun searchRepository(retrofit: Retrofit): SearchRepository = ApiSearchRepository(retrofit)
 }

@@ -6,12 +6,12 @@ import com.jakewharton.rxrelay3.BehaviorRelay
 import io.reactivex.rxjava3.kotlin.addTo
 
 interface SearchStore {
-    val sampleIntItem: BehaviorRelay<Int>
+    val searchResult: BehaviorRelay<String>
 }
 
 fun Store.subscribeSearchStore(dispatcher: Dispatcher) {
-    dispatcher.onImpl<SearchAction.GetSampleIntItem>()
+    dispatcher.onImpl<SearchAction.GetSearchResult>()
         .map { it.result }
-        .subscribe(sampleIntItem::accept)
+        .subscribe(searchResult::accept)
         .addTo(disposable)
 }

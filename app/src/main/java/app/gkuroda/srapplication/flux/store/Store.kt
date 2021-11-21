@@ -16,7 +16,7 @@ class Store(private val dispatcher: Dispatcher) : StoreInterface {
 
     val disposable = CompositeDisposable()
 
-    override val sampleIntItem: BehaviorRelay<Int> = BehaviorRelay.create()
+    override val searchResult: BehaviorRelay<String> = BehaviorRelay.create()
 
     init {
         subscribe()
