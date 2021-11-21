@@ -13,9 +13,6 @@ class SearchActionCreator(
     override fun getSearchResult(queryString: String) {
         searchRepository.getSearchResult(queryString)
             .subscribeOn(Schedulers.io())
-            .onErrorReturn {
-                "$it"
-            }
             .map(SearchAction::GetSearchResult)
             .subscribe(dispatcher::dispatch)
             .addTo(disposable)

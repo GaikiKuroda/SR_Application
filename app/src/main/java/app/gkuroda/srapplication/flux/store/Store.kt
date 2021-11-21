@@ -2,6 +2,7 @@ package app.gkuroda.srapplication.flux.store
 
 import app.gkuroda.srapplication.flux.Dispatcher
 import app.gkuroda.srapplication.flux.action.Action
+import app.gkuroda.srapplication.flux.api.SearchResponse
 import com.jakewharton.rxrelay3.BehaviorRelay
 import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.core.Scheduler
@@ -16,7 +17,7 @@ class Store(private val dispatcher: Dispatcher) : StoreInterface {
 
     val disposable = CompositeDisposable()
 
-    override val searchResult: BehaviorRelay<String> = BehaviorRelay.create()
+    override val searchResult: BehaviorRelay<SearchResponse> = BehaviorRelay.create()
 
     init {
         subscribe()
