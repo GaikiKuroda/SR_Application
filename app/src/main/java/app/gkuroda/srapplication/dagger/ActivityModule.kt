@@ -1,6 +1,7 @@
 package app.gkuroda.srapplication.dagger
 
 import app.gkuroda.srapplication.ui.MainActivity
+import app.gkuroda.srapplication.ui.SearchResultFragment
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 
@@ -8,4 +9,7 @@ import dagger.android.ContributesAndroidInjector
 abstract class ActivityModule {
     @ContributesAndroidInjector
     abstract fun contributeMainActivity(): MainActivity
+
+    @ContributesAndroidInjector
+    abstract fun contributeSearchResultFragment(): SearchResultFragment
 }

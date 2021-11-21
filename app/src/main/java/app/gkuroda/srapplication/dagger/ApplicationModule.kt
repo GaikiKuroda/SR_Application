@@ -12,6 +12,7 @@ import app.gkuroda.srapplication.flux.store.StoreInterface
 import dagger.Module
 import dagger.Provides
 import okhttp3.OkHttpClient
+import retrofit2.Retrofit
 import javax.inject.Singleton
 
 @Module
@@ -21,6 +22,9 @@ class ApplicationModule {
 
     @Provides
     fun okHttpClient(): OkHttpClient = OkHttpClient.Builder().build()
+
+ //   @Provides
+ //   fun retrofitCliant(okHttpClient: OkHttpClient): Retrofit = createRetrofitCliant(okHttpClient)
 
     @Singleton
     @Provides

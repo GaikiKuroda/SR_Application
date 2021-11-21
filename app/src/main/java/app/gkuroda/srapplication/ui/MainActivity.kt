@@ -12,9 +12,18 @@ class MainActivity : RxAppCompatActivity() {
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
 
+    private lateinit var viewModel: MainActivityViewModel
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         AndroidInjection.inject(this)
+
+        viewModel = viewModelFactory.get(this)
+
+        supportFragmentManager.beginTransaction()
+            .add(R.id.container, SearchResultFragment())
+            .commit()
     }
 }
