@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import app.gkuroda.srapplication.dagger.viewModel.ViewModelFactory
 import app.gkuroda.srapplication.databinding.FragmentSearchResultBinding
+import com.kaopiz.kprogresshud.KProgressHUD
 import com.trello.rxlifecycle4.components.support.RxFragment
 import dagger.android.support.AndroidSupportInjection
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -27,6 +28,13 @@ class SearchResultFragment : RxFragment() {
     private lateinit var binding: FragmentSearchResultBinding
 
     private val disposable = CompositeDisposable()
+
+    // プログレス表示
+    private val progress: KProgressHUD by lazy {
+        KProgressHUD.create(requireContext())
+            .setCancellable(false)
+            .setAnimationSpeed(1)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,6 +79,8 @@ class SearchResultFragment : RxFragment() {
                 rawItem.items.map { it.name }
             }
             .subscribe {
+                progress.dismiss()
+
                 recyclerViewAdapter.resultItems = it
                 recyclerViewAdapter.notifyDataSetChanged()
                 binding.executePendingBindings()
@@ -84,6 +94,7 @@ class SearchResultFragment : RxFragment() {
      */
     private fun requestSearch() {
         val query = "android"
+        progress.show()
         binding.queryString = query
         viewModel.requestSearch(query)
     }
