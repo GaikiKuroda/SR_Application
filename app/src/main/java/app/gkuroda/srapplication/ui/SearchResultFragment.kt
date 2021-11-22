@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import app.gkuroda.srapplication.dagger.viewModel.ViewModelFactory
 import app.gkuroda.srapplication.databinding.FragmentSearchResultBinding
@@ -13,6 +14,7 @@ import dagger.android.support.AndroidSupportInjection
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.kotlin.addTo
+import java.lang.Exception
 import javax.inject.Inject
 
 
@@ -86,6 +88,15 @@ class SearchResultFragment : RxFragment() {
                 binding.executePendingBindings()
             }
             .addTo(disposable)
+
+        viewModel.searchError
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                openErrorToast(it)
+                progress.dismiss()
+            }
+            .addTo(disposable)
+
     }
 
     /**
@@ -97,6 +108,11 @@ class SearchResultFragment : RxFragment() {
         progress.show()
         binding.queryString = query
         viewModel.requestSearch(query)
+    }
+
+    /** エラーが発生した場合トーストを出します */
+    private fun openErrorToast(exception: Exception){
+        Toast.makeText(requireContext(),"エラー：$exception",Toast.LENGTH_LONG).show()
     }
 
 }
