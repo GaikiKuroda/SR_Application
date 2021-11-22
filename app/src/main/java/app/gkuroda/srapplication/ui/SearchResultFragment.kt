@@ -104,7 +104,7 @@ class SearchResultFragment : RxFragment() {
      * 設定されたクエリを一番上に表示します
      */
     private fun requestSearch() {
-        val query = "android"
+        val query = "Android"
         progress.show()
         binding.queryString = query
         viewModel.requestSearch(query)
