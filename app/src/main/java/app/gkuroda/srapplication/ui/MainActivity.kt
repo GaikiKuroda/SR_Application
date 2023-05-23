@@ -1,26 +1,21 @@
 package app.gkuroda.srapplication.ui
 
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import app.gkuroda.srapplication.R
-import app.gkuroda.srapplication.dagger.viewModel.ViewModelFactory
-import com.trello.rxlifecycle4.components.support.RxAppCompatActivity
-import dagger.android.AndroidInjection
-import javax.inject.Inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class MainActivity : RxAppCompatActivity() {
+class MainActivity : AppCompatActivity() {
 
-    @Inject
-    lateinit var viewModelFactory: ViewModelFactory
-
-    private lateinit var viewModel: MainActivityViewModel
+    private val viewModel: MainActivityViewModel by viewModel<MainActivityViewModel>()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        AndroidInjection.inject(this)
 
-        viewModel = viewModelFactory.get(this)
+        // 現状ココで呼び出す必要はないが、呼び出さないとインスタンスができないためココで呼ぶ
+        viewModel
 
         supportFragmentManager.beginTransaction()
             .add(R.id.container, SearchResultFragment())

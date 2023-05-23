@@ -10,9 +10,8 @@ import com.jakewharton.rxrelay3.BehaviorRelay
 import com.jakewharton.rxrelay3.PublishRelay
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.kotlin.addTo
-import javax.inject.Inject
 
-class MainActivityViewModel @Inject constructor(
+class MainActivityViewModel(
     private val store: StoreInterface,
     private val searchActionCreator: SearchActionCreatable
 ) : ViewModel() {
@@ -21,6 +20,7 @@ class MainActivityViewModel @Inject constructor(
 
     // 検索結果連携用
     val searchResult: BehaviorRelay<SearchResponse> = BehaviorRelay.create()
+
     //エラー連携用
     val searchError: PublishRelay<Exception> = PublishRelay.create()
 

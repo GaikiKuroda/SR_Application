@@ -10,9 +10,8 @@ import io.reactivex.rxjava3.core.Scheduler
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import java.lang.Exception
-import javax.inject.Singleton
 
-@Singleton
+
 class Store(private val dispatcher: Dispatcher) : StoreInterface {
 
     val reducerThread: Scheduler = Schedulers.computation()

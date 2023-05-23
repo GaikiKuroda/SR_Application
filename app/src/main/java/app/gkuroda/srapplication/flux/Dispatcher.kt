@@ -4,11 +4,8 @@ import app.gkuroda.srapplication.flux.action.Action
 import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.processors.FlowableProcessor
 import io.reactivex.rxjava3.processors.PublishProcessor
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-class Dispatcher @Inject constructor() {
+class Dispatcher {
     val flowableProcessor: FlowableProcessor<Action> = PublishProcessor.create()
 
     fun dispatch(action: Action) {

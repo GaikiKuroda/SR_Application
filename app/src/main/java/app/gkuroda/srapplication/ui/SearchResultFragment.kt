@@ -6,24 +6,18 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
-import app.gkuroda.srapplication.dagger.viewModel.ViewModelFactory
 import app.gkuroda.srapplication.databinding.FragmentSearchResultBinding
 import com.kaopiz.kprogresshud.KProgressHUD
 import com.trello.rxlifecycle4.components.support.RxFragment
-import dagger.android.support.AndroidSupportInjection
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.kotlin.addTo
-import java.lang.Exception
-import javax.inject.Inject
+import org.koin.androidx.viewmodel.ext.android.activityViewModel
 
 
 class SearchResultFragment : RxFragment() {
 
-    @Inject
-    lateinit var viewModelFactory: ViewModelFactory
-
-    private lateinit var viewModel: MainActivityViewModel
+    private val viewModel: MainActivityViewModel by activityViewModel<MainActivityViewModel>()
 
     lateinit var recyclerViewAdapter: SearchResultRecyclerViewAdapter
 
@@ -40,10 +34,6 @@ class SearchResultFragment : RxFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        AndroidSupportInjection.inject(this)
-
-        val baseActivity = activity as MainActivity
-        viewModel = viewModelFactory.get(baseActivity)
     }
 
     override fun onCreateView(
@@ -111,8 +101,8 @@ class SearchResultFragment : RxFragment() {
     }
 
     /** エラーが発生した場合トーストを出します */
-    private fun openErrorToast(exception: Exception){
-        Toast.makeText(requireContext(),"エラー：$exception",Toast.LENGTH_LONG).show()
+    private fun openErrorToast(exception: Exception) {
+        Toast.makeText(requireContext(), "エラー：$exception", Toast.LENGTH_LONG).show()
     }
 
 }
