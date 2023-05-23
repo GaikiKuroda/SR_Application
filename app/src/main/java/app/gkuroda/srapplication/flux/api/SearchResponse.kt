@@ -1,13 +1,16 @@
 package app.gkuroda.srapplication.flux.api
 
-import com.squareup.moshi.Json
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class SearchResponse(
-    @Json(name = "items")
+    @SerialName("items")
     val items: List<SearchResponseItem>
 )
 
+@Serializable
 data class SearchResponseItem(
-    @Json(name = "name")
+    @SerialName("name")
     val name: String
 )

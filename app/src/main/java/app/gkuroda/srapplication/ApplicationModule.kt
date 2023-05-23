@@ -26,13 +26,18 @@ class ApplicationModule {
         })
         .build()
 
-    fun retrofit(): Retrofit =
-        Retrofit.Builder()
+    fun retrofit(): Retrofit {
+        val json = Json {
+            ignoreUnknownKeys = true
+        }
+
+        return Retrofit.Builder()
             .baseUrl("https://api.github.com")
-            .addConverterFactory(Json.asConverterFactory("application/json".toMediaType()))
+            .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
             .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
             .client(okHttpClient())
             .build()
+    }
 
 
     fun store(dispatcher: Dispatcher): StoreInterface = Store(dispatcher)
