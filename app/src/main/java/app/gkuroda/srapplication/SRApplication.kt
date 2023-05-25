@@ -9,6 +9,8 @@ import app.gkuroda.srapplication.flux.repository.search.SearchRepository
 import app.gkuroda.srapplication.flux.store.Store
 import app.gkuroda.srapplication.flux.store.StoreInterface
 import app.gkuroda.srapplication.ui.MainActivityViewModel
+import com.orhanobut.logger.AndroidLogAdapter
+import com.orhanobut.logger.Logger
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.context.GlobalContext.startKoin
@@ -46,6 +48,7 @@ class SRApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        Logger.addLogAdapter(AndroidLogAdapter())
 
         startKoin {
             androidContext(this@SRApplication)

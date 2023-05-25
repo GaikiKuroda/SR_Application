@@ -80,4 +80,7 @@ dependencies {
     implementation 'com.kaopiz:kprogresshud:1.2.0'
 
     implementation 'com.github.kittinunf.result:result:5.4.0'
+
+    implementation 'com.orhanobut:logger:2.2.0'
+
 }
