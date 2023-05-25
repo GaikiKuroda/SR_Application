@@ -4,17 +4,29 @@ import app.gkuroda.srapplication.flux.Dispatcher
 import app.gkuroda.srapplication.flux.action.search.SearchAction
 import app.gkuroda.srapplication.flux.api.SearchResponse
 import com.github.kittinunf.result.Result
-import com.jakewharton.rxrelay3.BehaviorRelay
-import io.reactivex.rxjava3.kotlin.addTo
-import java.lang.Exception
+import com.orhanobut.logger.Logger
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.withContext
 
 interface SearchStore {
-    val searchResult: BehaviorRelay<Result<SearchResponse, Exception>>
+    val searchResult: MutableStateFlow<Result<SearchResponse, Exception>>
 }
 
-fun Store.subscribeSearchStore(dispatcher: Dispatcher) {
-    dispatcher.onImpl<SearchAction.GetSearchResult>()
-        .map { it.result }
-        .subscribe(searchResult::accept)
-        .addTo(disposable)
+
+suspend fun Store.subscribeSearchStore(dispatcher: Dispatcher) {
+    withContext(Dispatchers.Default) {
+        dispatcher.onImpl<SearchAction.GetSearchResult>()
+            .map {
+                it.result
+            }
+            .collect {
+                searchResult.value = it
+            }
+    }
+
+
 }
+

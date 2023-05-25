@@ -1,8 +1,8 @@
 package app.gkuroda.srapplication.flux.repository.search
 
 import app.gkuroda.srapplication.flux.api.SearchResponse
-import io.reactivex.rxjava3.core.Single
+import kotlinx.coroutines.flow.Flow
 
 interface SearchRepository {
-    fun getSearchResult(queryString: String): Single<SearchResponse>
+    suspend fun getSearchResult(queryString: String): Flow<SearchResponse>
 }

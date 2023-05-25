@@ -1,6 +1,7 @@
 package app.gkuroda.srapplication.ui
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import app.gkuroda.srapplication.flux.action.search.SearchActionCreatable
 import app.gkuroda.srapplication.flux.api.SearchResponse
 import app.gkuroda.srapplication.flux.store.StoreInterface
@@ -8,15 +9,15 @@ import com.github.kittinunf.result.failure
 import com.github.kittinunf.result.success
 import com.jakewharton.rxrelay3.BehaviorRelay
 import com.jakewharton.rxrelay3.PublishRelay
-import io.reactivex.rxjava3.disposables.CompositeDisposable
-import io.reactivex.rxjava3.kotlin.addTo
+import com.orhanobut.logger.Logger
+import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
 class MainActivityViewModel(
     private val store: StoreInterface,
     private val searchActionCreator: SearchActionCreatable
 ) : ViewModel() {
-
-    private val disposable = CompositeDisposable()
 
     // 検索結果連携用
     val searchResult: BehaviorRelay<SearchResponse> = BehaviorRelay.create()
@@ -33,15 +34,17 @@ class MainActivityViewModel(
      */
     private fun subscribeStore() {
         store.searchResult
-            .subscribe { result ->
+            .drop(1)
+            .onEach { result ->
+                Logger.e("$result")
                 result.success {
                     searchResult.accept(it)
                 }
                 result.failure {
                     searchError.accept(it)
                 }
-
-            }.addTo(disposable)
+            }
+            .launchIn(viewModelScope)
 
     }
 
@@ -54,7 +57,7 @@ class MainActivityViewModel(
 
     override fun onCleared() {
         super.onCleared()
-        disposable.dispose()
+        searchActionCreator.onDestroy()
     }
 
 }

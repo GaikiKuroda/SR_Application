@@ -1,16 +1,18 @@
 package app.gkuroda.srapplication.flux
 
 import app.gkuroda.srapplication.flux.action.Action
-import io.reactivex.rxjava3.core.Flowable
-import io.reactivex.rxjava3.processors.FlowableProcessor
-import io.reactivex.rxjava3.processors.PublishProcessor
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.map
 
 class Dispatcher {
-    val flowableProcessor: FlowableProcessor<Action> = PublishProcessor.create()
+    val flowableProcessor: MutableSharedFlow<Action> = MutableSharedFlow<Action>(3, 3)
 
     fun dispatch(action: Action) {
-        flowableProcessor.onNext(action)
+        flowableProcessor.tryEmit(action)
     }
 
-    inline fun <reified T : Action> on(): Flowable<T> = flowableProcessor.filter { it is T }.map { it as T }
+    inline fun <reified T : Action> on(): Flow<T> =
+        flowableProcessor.filter { it is T }.map { it as T }
 }

@@ -4,31 +4,41 @@ import app.gkuroda.srapplication.flux.Dispatcher
 import app.gkuroda.srapplication.flux.action.Action
 import app.gkuroda.srapplication.flux.api.SearchResponse
 import com.github.kittinunf.result.Result
-import com.jakewharton.rxrelay3.BehaviorRelay
-import io.reactivex.rxjava3.core.Flowable
-import io.reactivex.rxjava3.core.Scheduler
-import io.reactivex.rxjava3.disposables.CompositeDisposable
-import io.reactivex.rxjava3.schedulers.Schedulers
-import java.lang.Exception
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineName
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.launch
 
 
 class Store(private val dispatcher: Dispatcher) : StoreInterface {
 
-    val reducerThread: Scheduler = Schedulers.computation()
+    val coroutineDispatcher: CoroutineDispatcher = Dispatchers.Default
 
-    val disposable = CompositeDisposable()
+    val stroeJob = Job()
+    val storeScope = CoroutineScope(stroeJob + coroutineDispatcher + CoroutineName("Store"))
 
-    override val searchResult: BehaviorRelay<Result<SearchResponse, Exception>> = BehaviorRelay.create()
+
+    override val searchResult: MutableStateFlow<Result<SearchResponse, Exception>> =
+        MutableStateFlow(Result.success(SearchResponse(mutableListOf())))
+
 
     init {
         subscribe()
     }
 
     private fun subscribe() {
-        subscribeSearchStore(dispatcher)
+        storeScope.launch {
+            subscribeSearchStore(dispatcher)
+        }
     }
 
-    inline fun <reified T : Action> Dispatcher.onImpl(): Flowable<T> =
-        on<T>().observeOn(reducerThread)
+    inline fun <reified T : Action> Dispatcher.onImpl(): Flow<T> =
+        on<T>().flowOn(coroutineDispatcher)
+
 
 }

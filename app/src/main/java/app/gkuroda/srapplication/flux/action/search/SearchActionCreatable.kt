@@ -5,4 +5,6 @@ interface SearchActionCreatable {
      * 検索のリクエストを行います
      */
     fun getSearchResult(queryString: String)
+
+    fun onDestroy()
 }
