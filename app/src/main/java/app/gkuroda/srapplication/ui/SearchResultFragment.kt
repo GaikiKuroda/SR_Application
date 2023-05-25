@@ -5,25 +5,25 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import app.gkuroda.srapplication.databinding.FragmentSearchResultBinding
+import app.gkuroda.srapplication.flux.api.SearchResponse
+import com.github.kittinunf.result.Result
+import com.github.kittinunf.result.failure
+import com.github.kittinunf.result.success
 import com.kaopiz.kprogresshud.KProgressHUD
-import com.trello.rxlifecycle4.components.support.RxFragment
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.disposables.CompositeDisposable
-import io.reactivex.rxjava3.kotlin.addTo
 import org.koin.androidx.viewmodel.ext.android.activityViewModel
 
 
-class SearchResultFragment : RxFragment() {
+class SearchResultFragment : Fragment() {
 
     private val viewModel: MainActivityViewModel by activityViewModel<MainActivityViewModel>()
 
     lateinit var recyclerViewAdapter: SearchResultRecyclerViewAdapter
 
     private lateinit var binding: FragmentSearchResultBinding
-
-    private val disposable = CompositeDisposable()
 
     // プログレス表示
     private val progress: KProgressHUD by lazy {
@@ -65,29 +65,23 @@ class SearchResultFragment : RxFragment() {
      * Viewmodelの値の更新を監視します
      */
     private fun subscribeViewModel() {
-        viewModel.searchResult
-            .observeOn(AndroidSchedulers.mainThread())
-            .map { rawItem ->
-                rawItem.items.map { it.name }
-            }
-            .subscribe {
-                progress.dismiss()
-
-                recyclerViewAdapter.resultItems = it
+        val searchResultObserver = Observer<Result<SearchResponse, Exception>> { result ->
+            progress.dismiss()
+            result.success { successResponse ->
+                recyclerViewAdapter.resultItems = successResponse.items.map { it.name }
                 recyclerViewAdapter.notifyDataSetChanged()
                 binding.executePendingBindings()
             }
-            .addTo(disposable)
-
-        viewModel.searchError
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe {
+            result.failure {
                 openErrorToast(it)
                 progress.dismiss()
             }
-            .addTo(disposable)
+        }
+
+        viewModel.searchResult.observe(this.viewLifecycleOwner, searchResultObserver)
 
     }
+
 
     /**
      * 検索を実行します。
