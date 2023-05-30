@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.flow
 class RealmResultLogRepository(private val realm: Realm) : ResultLogRepository {
 
 
-    override suspend fun getSearchResultCount(queryString: String): Flow<Long> {
+    override suspend fun getSearchResultCount(): Flow<Long> {
         return realm.query(RealmGithubSearchResult::class).count().asFlow()
     }
 

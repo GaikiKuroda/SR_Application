@@ -26,6 +26,10 @@ class Store(private val dispatcher: Dispatcher) : StoreInterface {
     override val searchResult: MutableStateFlow<Result<SearchResponse, Exception>> =
         MutableStateFlow(Result.success(SearchResponse(mutableListOf())))
 
+    override val searchResultCount: MutableStateFlow<Long> = MutableStateFlow(0)
+
+    override val saveSearchResult: MutableStateFlow<Long> = MutableStateFlow(0)
+
 
     init {
         subscribe()
@@ -34,6 +38,7 @@ class Store(private val dispatcher: Dispatcher) : StoreInterface {
     private fun subscribe() {
         storeScope.launch {
             subscribeSearchStore(dispatcher)
+            subscribeResultLogStore(dispatcher)
         }
     }
 
