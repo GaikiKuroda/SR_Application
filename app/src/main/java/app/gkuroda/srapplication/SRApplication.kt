@@ -1,11 +1,9 @@
 package app.gkuroda.srapplication
 
 import android.app.Application
-import app.gkuroda.srapplication.flux.Dispatcher
 import app.gkuroda.srapplication.ui.MainActivityViewModel
 import com.orhanobut.logger.AndroidLogAdapter
 import com.orhanobut.logger.Logger
-import io.realm.kotlin.Realm
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.context.GlobalContext.startKoin
@@ -16,28 +14,16 @@ class SRApplication : Application() {
     private val moduleClass = ApplicationModule()
 
     //アプリケーション全体のモジュール
-    private val appModule = module {
-        single { Dispatcher() }
-        single { moduleClass.baseApiPath(this@SRApplication) }
-        single { moduleClass.realm() }
-        single { moduleClass.store(get()) }
-    }
+    private val appModule by lazy { moduleClass.createAppModule(this.applicationContext) }
 
     // ネットワーク関連モジュール
-    private val networkModule = module {
-        single { moduleClass.retrofit() }
-    }
+    private val networkModule by lazy { moduleClass.createNetworkModule() }
 
     //  repository関連のモジュール
-    private val repositoryModule = module {
-        single { moduleClass.searchRepository(get()) }
-        single { moduleClass.resultLogRepository(get() as Realm) }
-    }
+    private val repositoryModule by lazy { moduleClass.createRepositoryModule() }
 
     //  action関連のモジュール
-    private val actionModule = module {
-        factory { moduleClass.searchActionCreator(get(), get()) }
-    }
+    private val actionModule by lazy { moduleClass.createActionModule() }
 
     //viewmodelモジュール
     private val viewModelModule = module {
