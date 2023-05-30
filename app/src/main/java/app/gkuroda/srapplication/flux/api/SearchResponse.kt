@@ -1,5 +1,6 @@
 package app.gkuroda.srapplication.flux.api
 
+import app.gkuroda.srapplication.flux.model.SearchResponseItemInterface
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -12,5 +13,5 @@ data class SearchResponse(
 @Serializable
 data class SearchResponseItem(
     @SerialName("name")
-    val name: String
-)
+    override var name: String
+) : SearchResponseItemInterface

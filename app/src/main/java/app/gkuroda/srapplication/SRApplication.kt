@@ -2,15 +2,10 @@ package app.gkuroda.srapplication
 
 import android.app.Application
 import app.gkuroda.srapplication.flux.Dispatcher
-import app.gkuroda.srapplication.flux.action.search.SearchActionCreatable
-import app.gkuroda.srapplication.flux.action.search.SearchActionCreator
-import app.gkuroda.srapplication.flux.repository.search.ApiSearchRepository
-import app.gkuroda.srapplication.flux.repository.search.SearchRepository
-import app.gkuroda.srapplication.flux.store.Store
-import app.gkuroda.srapplication.flux.store.StoreInterface
 import app.gkuroda.srapplication.ui.MainActivityViewModel
 import com.orhanobut.logger.AndroidLogAdapter
 import com.orhanobut.logger.Logger
+import io.realm.kotlin.Realm
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.context.GlobalContext.startKoin
@@ -24,19 +19,24 @@ class SRApplication : Application() {
     private val appModule = module {
         single { Dispatcher() }
         single { moduleClass.baseApiPath(this@SRApplication) }
+        single { moduleClass.realm() }
+        single { moduleClass.store(get()) }
     }
-
 
     // ネットワーク関連モジュール
     private val networkModule = module {
         single { moduleClass.retrofit() }
     }
 
-    // flux関連のモジュール
-    private val fluxModule = module {
-        single<SearchRepository> { ApiSearchRepository(get()) }
-        single<StoreInterface> { Store(get()) }
-        factory<SearchActionCreatable> { SearchActionCreator(get<Dispatcher>(), get()) }
+    //  repository関連のモジュール
+    private val repositoryModule = module {
+        single { moduleClass.searchRepository(get()) }
+        single { moduleClass.resultLogRepository(get() as Realm) }
+    }
+
+    //  action関連のモジュール
+    private val actionModule = module {
+        factory { moduleClass.searchActionCreator(get(), get()) }
     }
 
     //viewmodelモジュール
@@ -52,7 +52,7 @@ class SRApplication : Application() {
 
         startKoin {
             androidContext(this@SRApplication)
-            modules(appModule, networkModule, fluxModule, viewModelModule)
+            modules(appModule, networkModule, repositoryModule, actionModule, viewModelModule)
         }
     }
 }

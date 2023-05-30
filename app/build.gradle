@@ -3,6 +3,7 @@ plugins {
     id 'kotlin-android'
     id 'kotlin-kapt'
     id 'kotlinx-serialization'
+    id 'io.realm.kotlin'
 }
 
 android {
@@ -73,6 +74,9 @@ dependencies {
     // Okhttp
     implementation 'com.squareup.okhttp3:okhttp:5.0.0-alpha.11'
     implementation 'com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.11'
+
+    // realm
+    implementation 'io.realm.kotlin:library-base:1.8.0'
 
     implementation 'com.kaopiz:kprogresshud:1.2.0'
 
